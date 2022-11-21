@@ -35,11 +35,11 @@ class SolarTrackerArray:
     if anenometer_windspeed < self.windspeed_safety_threshold:
       return 
 
-  def check_sun_radiation_level(self):
-    pass
+  # def check_sun_radiation_level(self):
+  #   pass
 
-  def check_solar_sensor_X(self, input_sensor):
-    pass
+  # def check_solar_sensor_X(self, input_sensor:object):
+  #   input_sensor.check_diode_output_strength
 
   def move_azimuth_motor(self):
     #check against minmaxes
