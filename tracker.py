@@ -49,7 +49,7 @@ class SolarTrackerArray:
 
   def move_azimuth_motor(self):
     #check against minmaxes
-    self.__azimuth_angle += 0.25
+    self.__azimuth_angle += 0.5
     if self.__azimuth_angle >= self.limits_azimuth_angles[0] or self.__azimuth_angle < self.limits_altitude_angles[1]:
       return True
     elif self.__azimuth_angle >= self.limits_azimuth_angles[1]:
@@ -60,7 +60,11 @@ class SolarTrackerArray:
 
   def move_altitude_motor(self):
     #check against minmaxes
-    pass
+    self.__altitude_angle += 0.125
+    if self.__altitude_angle >= self.limits_altitude_angles[0] or self.__altitude_angle < self.limits_altitude_angles[1]:
+      return True
+    elif self.__altitude_angle > self.limits_altitude_angles[1] or self.__altitude_angle < self.limits_altitude_angles[0]:
+      raise Exception("Number out of mechanical bounds")
 
   def get_sun_direction(self):
     return self.sun_direction
