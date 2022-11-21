@@ -27,11 +27,7 @@ def main():
   print(w_sensor.get_output_voltage())
   print(e_sensor.get_output_voltage())
 
-  # #day cycle
-  # for i in range(0,1439):
-  #   the_sun.update_sun_pos()
-  #   if i % 10 == 0:
-  #     print(f"check{i}: ",the_sun.get_sun_pos())
+  
 
 if __name__ == "__main__":
   main()

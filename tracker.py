@@ -6,6 +6,7 @@
 class SolarTrackerArray:
 
   #class vars
+  min_light_levels = 100.0 #W/m2
   limits_azimuth_angles = [0.0,360.0]
   limits_altitude_angles = [0.0,90.0]
   windspeed_safety_threshold = 30.0 #this is in kmph, realisticially we would have a rpm check so convert this over
@@ -33,17 +34,29 @@ class SolarTrackerArray:
     #You can use a “shortcut” method in calculating the anemometer speed. #Multiply the rpm by 0.03 to obtain your anemometer speed in km/hr.
     anenometer_windspeed = anenometer_rpm * 0.03 # conversion
     if anenometer_windspeed < self.windspeed_safety_threshold:
-      return 
+      return True
+    elif anenometer_windspeed >= self.windspeed_safety_threshold:
+      return False
 
-  # def check_sun_radiation_level(self):
-  #   pass
+  def check_sun_radiation_level(self, test_sensor):
+    if test_sensor >= self.min_light_levels: #W/m2
+      return True
+    if test_sensor < self.min_light_levels:
+      return False
 
   # def check_solar_sensor_X(self, input_sensor:object):
   #   input_sensor.check_diode_output_strength
 
   def move_azimuth_motor(self):
     #check against minmaxes
-    pass
+    self.__azimuth_angle += 0.25
+    if self.__azimuth_angle >= self.limits_azimuth_angles[0] or self.__azimuth_angle < self.limits_altitude_angles[1]:
+      return True
+    elif self.__azimuth_angle >= self.limits_azimuth_angles[1]:
+      self.__azimuth_angle -= self.limits_azimuth_angles[1]
+      return True
+    else:
+      raise Exception("Number out of mechanical bounds")
 
   def move_altitude_motor(self):
     #check against minmaxes
