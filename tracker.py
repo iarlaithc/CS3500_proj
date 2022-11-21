@@ -64,7 +64,7 @@ class SolarTrackerArray:
     if self.__altitude_angle >= self.limits_altitude_angles[0] or self.__altitude_angle < self.limits_altitude_angles[1]:
       return True
     elif self.__altitude_angle > self.limits_altitude_angles[1] or self.__altitude_angle < self.limits_altitude_angles[0]:
-      raise Exception("Number out of mechanical bounds")
+      raise Exception("Number out of mechanical bounds") 
 
   def get_sun_direction(self):
     return self.sun_direction
