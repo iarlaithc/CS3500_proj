@@ -31,11 +31,13 @@ class SolarTrackerArray:
     pass
 
   def calibrate_sensors(self):
+    #unessecary for sim
     pass
 
   def safety_state(self):
     #check where motors are at, then move arms to flat panel 0degs alt any az angle
-    pass
+    while self.__altitude_angle < 89.8:
+      self.move_altitude_motor(1)
 
   def check_anenometer(self,anenometer_rpm=0):
     #You can use a “shortcut” method in calculating the anemometer speed. #Multiply the rpm by 0.03 to obtain your anemometer speed in km/hr.

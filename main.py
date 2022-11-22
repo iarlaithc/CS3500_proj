@@ -11,7 +11,7 @@ import time
 def run_routine():
   #start
   #init instances of tracker and diodes and clock
-  clock = time.clock()
+  start = time.clock()
   n_sensor = Photodiode("N")
   s_sensor = Photodiode("S")
   e_sensor = Photodiode("E")
