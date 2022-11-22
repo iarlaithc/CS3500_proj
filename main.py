@@ -4,30 +4,21 @@
 # #
 
 from tracker import SolarTrackerArray
-from Sun import Sun
+#from Sun import Sun
 from photodiode import Photodiode
 
 def main():
 
-  the_sun = Sun(270,18)
-  
-  array1 = SolarTrackerArray(1)
-
+  #the_sun = Sun(270,18)
   n_sensor = Photodiode("N")
   s_sensor = Photodiode("S")
   e_sensor = Photodiode("E")
   w_sensor = Photodiode("W")
 
-  w_sensor.set_surface_irradiation(10.0)
-  e_sensor.set_surface_irradiation(8)
-
-  w_sensor.check_diode_output_strength()
-  e_sensor.check_diode_output_strength()
-
-  print(w_sensor.get_output_voltage())
-  print(e_sensor.get_output_voltage())
-
-  
+  array1 = SolarTrackerArray(1,30,300,[8660,4999,5352])
+  array1.calc_angles_from_sunpoints()
+  array1.set_sun_direction()
+  print(array1.get_sun_direction())
 
 if __name__ == "__main__":
   main()
