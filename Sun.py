@@ -21,15 +21,20 @@ from math import cos,sin,tan,pi
 
 class Sun:
   solar_constant = 1380 #Watts/m^2
-  avg_horizon_dist = 10000 #metres
+  radius = 10000 #metres
+  limits_azimuth_angles = [0.0,360.0]
+  limits_altitude_angles = [0.0,90.0]
 
   ##this doesnt work
   speed_const = 0.15 #degs/min
 
-  def __init__(self,starting_azimuth:float, starting_altitude:float):
+  def __init__(self, starting_altitude:float=270.0,starting_azimuth:float=30.0):
+    if starting_altitude > 90 or starting_azimuth > 360:
+      raise Exception("init out of bounds, impossible angle")
+
     self.__altitude_angle = starting_altitude
     self.__azimuth_angle = starting_azimuth
-    self.sun_pos_angles = []
+    self.sun_pos_angles = [self.__altitude_angle,self.__azimuth_angle]
     self.sun_coords = []
 
     self.weather_effect = 1.0
@@ -39,7 +44,7 @@ class Sun:
   def add_weather_effect(self):
     self.output_radiation_power = self.solar_constant * self.weather_effect 
 
-  def update_sun_pos(self): ###this doesnt work
+  def set_sun_pos(self): ###this doesnt work
     #per minute
     sx = self.radius*cos(self.convert_degs_to_rads(self.__altitude_angle))
     sy = self.radius*sin(self.convert_degs_to_rads(self.__altitude_angle))
@@ -49,9 +54,6 @@ class Sun:
   def set_sun_direction(self):
     self.sun_pos_angles = [self.__altitude_angle, self.__azimuth_angle]
 
-  def get_sun_pos(self):
-    return self.sun_pos
-
   def convert_degs_to_rads(self,in_degrees):
     radians = in_degrees*(pi/180)
     return radians
@@ -59,3 +61,29 @@ class Sun:
   def convert_rads_to_degs(self,in_rads):
     degrees = in_rads/(pi/180)
     return degrees
+
+  def set_sun_angles(self,alt_in, azi_in):
+    self.__altitude_angle = alt_in
+    self.__azimuth_angle = azi_in
+
+  def increment_sun_alt_angle(self,speed_mult):
+    alt = self.sun_pos_angles[0] + (0.5*speed_mult)
+    return alt
+
+  def increment_sun_azi_angle(self,speed_mult):
+    azi = self.sun_pos_angles[1] + (0.5*speed_mult)
+    return azi
+
+  def decrement_sun_alt_angle(self,speed_mult):
+    alt = self.sun_pos_angles[0] - (0.5*speed_mult)
+    return alt
+
+  def decrement_sun_azi_angle(self,speed_mult):
+    azi = self.sun_pos_angles[1] - (0.5*speed_mult)
+    return azi
+
+  def move_sun(self,min_max):
+    pass
+    #takes list input from dict in form "key":["min alt","max alt","min azi","max azi"],
+    
+

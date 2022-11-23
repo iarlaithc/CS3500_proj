@@ -4,20 +4,34 @@
 # #
 
 from tracker import SolarTrackerArray
-#from Sun import Sun
+from Sun import Sun
 from photodiode import Photodiode
-import time
+from time import time,sleep
+
+sun_path_dict = {
+  "key":["min alt","max alt","min azi","max azi"],
+  "january" : [10,40,270,30],
+  "march" : [10,45,280,40], 
+  "may" : [10,70,282,50], 
+  "july" : [10,75,280,60], 
+  "september" : [10,55,275,70], 
+  "novemeber" : [10,40,270,80], 
+}
 
 def run_routine():
   #start
-  #init instances of tracker and diodes and clock
-  routine_start = time.clock()
+  #init instances of tracker and diodes
+  user_choice_month = sun_path_dict["march"]
+  print(user_choice_month)
+  routine_start = time()
+  #alt,azi
+  the_sun = Sun(user_choice_month[0],user_choice_month[2])
   n_sensor = Photodiode("N")
   s_sensor = Photodiode("S")
   e_sensor = Photodiode("E")
   w_sensor = Photodiode("W")
 
-  array1 = SolarTrackerArray(1,30,300)
+  array1 = SolarTrackerArray(1,89.5,0)
   
   wind_input_speed = 0
   wind_safe = False
@@ -28,43 +42,47 @@ def run_routine():
   #overall loop begins
   running_init = True
   while running_init == True:
+    the_sun.move_sun(user_choice_month)
     #check windspeed
     windspeed_test = array1.check_anenometer(wind_input_speed)
     wind_safe = windspeed_test
 
-    while wind_safe == True:
+    if wind_safe == True:
       #check sun level
       enough_sun = array1.check_sun_radiation_level()
       daytime = enough_sun
 
-      while daytime == True:
+      if daytime == True:
         state_tracker = 0
-        end = time.clock()
+        end = time()
         #check all 4 diodes and compare them
         e1 = e_sensor.check_diode_output_strength()
         w1 = w_sensor.check_diode_output_strength()
         s1 = s_sensor.check_diode_output_strength()
         n1 = n_sensor.check_diode_output_strength()
+        check_180 = array1.sun_direction[1]-the_sun.sun_pos_angles[1]
 
-        if end-routine_start >= 600:
+        if end-routine_start >= 60: #600 actually, shortened for demo
           daytime = False
           wind_safe = False
           running_init = False
 
-        elif e1 > w1:
+        elif array1.sun_direction[1] > the_sun.sun_pos_angles[1]:
           #turn anticlockwise
-          array1.move_azimuth_motor(-1)
-          #moved
+          if abs(check_180) >= 180:
+            array1.move_azimuth_motor(1)
+          elif abs(check_180) < 180:
+            array1.move_azimuth_motor(-1)
 
-        elif e1 < w1:
+        elif array1.sun_direction[1] < the_sun.sun_pos_angles[1]:
           #turn clockwise
           array1.move_azimuth_motor(1)
 
-        elif n1 > s1:
+        elif array1.sun_direction[0] < the_sun.sun_pos_angles[0]:
           #tilt up
           array1.move_altitude_motor(1)
 
-        elif s1 > n1:
+        elif array1.sun_direction[0] > the_sun.sun_pos_angles[0]:
           #tilt down
           array1.move_altitude_motor(-1)
 
@@ -72,17 +90,25 @@ def run_routine():
           daytime = False
           wind_safe = False
 
-        time.sleep(180)
+        print(array1.sun_direction)
+        #sleep(180) # 2mins realistically, shortened for test
+        sleep(0.5)
       
+    elif wind_safe!= True:
       state_tracker = 2
+      array1.safety_state()
+      #sleep(180) # realistically, shortened for test
+      sleep(0.5)
     
     state_tracker = 1
-    array1.safety_state()
+    #sleep(180) # realistically, shortened for test
+    sleep(0.5)
 
 
 def main():
   #t0 = time.clock()
-  run_routine()
+  while True:
+    run_routine()
 
 if __name__ == "__main__":
   main()
