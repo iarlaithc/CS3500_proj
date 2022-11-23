@@ -4,7 +4,7 @@ from tracker import SolarTrackerArray
 from photodiode import Photodiode
 
 #this is unit testing with the python standard test framework unittest unit testing package
-#
+# The analysis and description of the required tests should also be included in the report
 
 class TestSun(unittest.TestCase):
 	def setUp(self):

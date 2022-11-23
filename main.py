@@ -9,21 +9,21 @@ from photodiode import Photodiode
 from time import time,sleep
 
 sun_path_dict = {
-  "key":["min alt","max alt","min azi","max azi","speed multiplyer"],
-  "january" : [10,40,270,30,1],
-  "march" : [10,45,280,40,1], 
-  "may" : [10,70,282,50,2], 
-  "july" : [10,75,280,60,2], 
-  "september" : [10,55,275,70,1], 
-  "november" : [10,40,270,80,1], 
+  #"key":["min alt","max alt","min azi","max azi","speed multiplyer"]
+  "January" : [10,40,270,30,1],
+  "March" : [10,45,280,40,1], 
+  "May" : [10,70,282,50,2], 
+  "July" : [10,75,280,60,2], 
+  "September" : [10,55,275,70,1], 
+  "November" : [10,40,270,80,1], 
 }
 
-def run_routine():
+def run_routine(chosen_month):
   counter = 0
   sleep(0.005)
   #start
   #init instances of tracker and diodes
-  user_choice_month = sun_path_dict["july"]
+  user_choice_month = sun_path_dict[chosen_month]
   routine_start = time()
   #alt,azi
   the_sun = Sun(user_choice_month[0],user_choice_month[2])
@@ -62,7 +62,11 @@ def run_routine():
         s1 = s_sensor.check_diode_output_strength()
         n1 = n_sensor.check_diode_output_strength()
 
-        if end-routine_start >= 40: #600 actually, shortened for demo #resets system
+        #print("## Azimuth Motor Angle: " + str(array1.sun_direction[1]) + "## Altitude Motor Angle: "+ str(array1.sun_direction[0]) + "## Current State: "+str(state_tracker) +"##")
+
+        print(array1.sun_direction)
+        
+        if end-routine_start >= 60: #600 actually, shortened for demo #resets system
           daytime = False
           wind_safe = False
           running_init = False
@@ -107,10 +111,8 @@ def run_routine():
           daytime = False
           wind_safe = False
 
-        #print(array1.sun_direction)
-        print(the_sun.sun_pos_angles)
         #sleep(180) # 2mins realistically, shortened for test
-        #sleep(0.5)
+        end = time()
       
     elif wind_safe!= True:
       state_tracker = 2
@@ -122,12 +124,28 @@ def run_routine():
     #sleep(180) # realistically, shortened for test
     sleep(0.025)
 
-
 def main():
-  counter = 0
-  # while True:
-  #   run_routine()
-  run_routine()
+  menu = True
+  while menu ==True:
+    start = True
+    n = input("Do you wish to start the tracking array? - Y/N : ")
+
+    if n.lower() == "n":
+      start = False
+      print("Goodbye.\nShutting down in:n")
+      for i in range(3,0,-1):
+        print(i)
+        sleep(0.8)
+        menu = False
+
+    elif n.lower() == "y":
+      for i in sun_path_dict.keys():
+        print(i)
+      input_month = input("Choose which month you would like to simulate from the above list: ")
+      run_routine(input_month) # run the simulation
+
+    else:
+      print("Invalid Choice. Try Again. ")
 
 if __name__ == "__main__":
   main()
