@@ -3,6 +3,9 @@ from Sun import Sun
 from tracker import SolarTrackerArray
 from photodiode import Photodiode
 
+#this is unit testing with the python standard test framework unittest unit testing package
+#
+
 class TestSun(unittest.TestCase):
 	def setUp(self):
 		self.sun1 = Sun(85,290)
@@ -72,3 +75,5 @@ class TestPhotoDiode(unittest.TestCase):
 
 if __name__ == '__main__':
 	unittest.main()
+
+#its testing
