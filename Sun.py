@@ -29,7 +29,7 @@ class Sun:
   ##this doesnt work
   speed_const = 0.15 #degs/min
 
-  def __init__(self, starting_altitude:float=270.0,starting_azimuth:float=30.0):
+  def __init__(self, starting_altitude:float=10.0,starting_azimuth:float=270.0):
     if starting_altitude > 90 or starting_azimuth > 360:
       raise Exception("init out of bounds, impossible angle")
 
@@ -44,6 +44,8 @@ class Sun:
 
   def add_weather_effect(self):
     self.output_radiation_power = self.solar_constant * self.weather_effect 
+    if self.output_radiation_power < 0:
+      raise Exception("negative value intercepted")
 
   def set_sun_pos(self): ###this doesnt work
     #per minute
@@ -54,6 +56,7 @@ class Sun:
 
   def set_sun_direction(self):
     self.sun_pos_angles = [self.__altitude_angle, self.__azimuth_angle]
+    return self.sun_pos_angles
 
   def convert_degs_to_rads(self,in_degrees):
     radians = in_degrees*(pi/180)
@@ -76,6 +79,8 @@ class Sun:
       self.__azimuth_angle -= 360
 
   def decrement_sun_alt_angle(self,speed_mult):
+    if speed_mult < 1:
+      raise Exception("Multiplier must be a positive integer, input was negative")
     self.__altitude_angle -= (0.5*speed_mult)
 
   def decrement_sun_azi_angle(self,speed_mult):
@@ -104,3 +109,4 @@ class Sun:
         self.increment_sun_azi_angle(mult)
 
     self.set_sun_direction()
+    return True
