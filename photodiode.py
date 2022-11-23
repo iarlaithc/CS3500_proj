@@ -7,7 +7,7 @@ class Photodiode:
 
   def __init__(self,polar_name):
     self.__surface_irradiation = 0.0 #float #unit for irradiance is watt/m^2
-    self.__output_voltage = float
+    self.__output_voltage = 0
     self.name = polar_name
 
   def check_diode_output_strength(self):

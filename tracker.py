@@ -40,6 +40,10 @@ class SolarTrackerArray:
     #check where motors are at, then move arms to flat panel 0degs alt any az angle
     while self.__altitude_angle < 89.8:
       self.move_altitude_motor(1)
+    return True
+
+  def set_anenometer_speed(self,speed_input):
+    self.anenometer_rpm = speed_input
 
   def check_anenometer(self,anenometer_rpm=0):
     #You can use a “shortcut” method in calculating the anemometer speed. #Multiply the rpm by 0.03 to obtain your anemometer speed in km/hr.
@@ -59,12 +63,16 @@ class SolarTrackerArray:
     self.__azimuth_angle += 0.5
     if self.__azimuth_angle >= 360:
       self.__azimuth_angle -= 360
+    if self.__azimuth_angle > 360:
+      raise Exception("impossible angle, azimuth angle instance var must be less than 360 and greater than 0")
     self.set_sun_direction()
 
   def decrement_array_azi_angle(self):
     self.__azimuth_angle -= 0.5
     if self.__azimuth_angle < 0:
       self.__azimuth_angle += 360
+    if self.__azimuth_angle < 0:
+      raise Exception("angles must be a positive value less than 360, azimuth angle inputted is less than 0")
     self.set_sun_direction()
 
   def move_altitude_motor(self,mult:float):
@@ -93,8 +101,10 @@ class SolarTrackerArray:
     sy = self.radius*sin(self.convert_degs_to_rads(self.__altitude_angle))
     sz = sx/(tan(self.convert_degs_to_rads((2*pi)-self.__azimuth_angle)))
     self.sun_coords = [sx,sy,sz]
+    return self.sun_coords
 
   def calc_angles_from_sunpoints(self):
     self.__altitude_angle = self.convert_rads_to_degs(acos(self.sun_coords[0]/self.radius))
     self.__azimuth_angle = self.convert_rads_to_degs((2*pi)-atan(self.sun_coords[0]/self.sun_coords[2]))
     self.set_sun_direction()
+    return True
