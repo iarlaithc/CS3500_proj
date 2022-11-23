@@ -14,7 +14,7 @@ class SolarTrackerArray:
   windspeed_safety_threshold = 30.0 #this is in kmph, realisticially we would have a rpm check so convert this over
   radius = 10000
 
-  def __init__(self,array_number:int, start_altitude_angle:float = 0, start_azimuth_angle:float = 0):
+  def __init__(self,array_number:int, start_altitude_angle:float = 89.5, start_azimuth_angle:float = 0):
     #system setup & instance vars
     self.array_number = array_number
     self.__altitude_angle = start_altitude_angle
@@ -55,28 +55,22 @@ class SolarTrackerArray:
     if test_sensor < self.min_light_levels:
       return False
 
-  def move_azimuth_motor(self,mult:float):
-    #check against minmaxes
-    self.__azimuth_angle += 0.5*mult
-    sleep(0.01)
-    if self.__azimuth_angle >= self.limits_azimuth_angles[0] or self.__azimuth_angle < self.limits_altitude_angles[1]:
-      self.set_sun_direction()
-      return True
-    elif self.__azimuth_angle >= self.limits_azimuth_angles[1]:
-      self.__azimuth_angle -= self.limits_azimuth_angles[1]
-      self.set_sun_direction()
-      return True
-    elif self.__azimuth_angle <= self.limits_azimuth_angles[1]:
-      self.__azimuth_angle += self.limits_azimuth_angles[1]
-      self.set_sun_direction()
-      return True
-    else:
-      raise Exception("Number out of mechanical bounds")
+  def increment_array_azi_angle(self):
+    self.__azimuth_angle += 0.5
+    if self.__azimuth_angle >= 360:
+      self.__azimuth_angle -= 360
+    self.set_sun_direction()
+
+  def decrement_array_azi_angle(self):
+    self.__azimuth_angle -= 0.5
+    if self.__azimuth_angle < 0:
+      self.__azimuth_angle += 360
+    self.set_sun_direction()
 
   def move_altitude_motor(self,mult:float):
     #check against minmaxes
-    self.__altitude_angle += 0.5*mult
-    sleep(0.01)
+    self.__altitude_angle += 0.25*mult
+    
     self.set_sun_direction()
     if self.__altitude_angle >= self.limits_altitude_angles[0] or self.__altitude_angle < self.limits_altitude_angles[1]:
       return True

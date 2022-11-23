@@ -24,6 +24,7 @@ class Sun:
   radius = 10000 #metres
   limits_azimuth_angles = [0.0,360.0]
   limits_altitude_angles = [0.0,90.0]
+  zenith_flag = 0
 
   ##this doesnt work
   speed_const = 0.15 #degs/min
@@ -67,23 +68,39 @@ class Sun:
     self.__azimuth_angle = azi_in
 
   def increment_sun_alt_angle(self,speed_mult):
-    alt = self.sun_pos_angles[0] + (0.5*speed_mult)
-    return alt
+    self.__altitude_angle += (0.5*speed_mult)
 
   def increment_sun_azi_angle(self,speed_mult):
-    azi = self.sun_pos_angles[1] + (0.5*speed_mult)
-    return azi
+    self.__azimuth_angle += (0.5*speed_mult)
+    if self.__azimuth_angle >= 360:
+      self.__azimuth_angle -= 360
 
   def decrement_sun_alt_angle(self,speed_mult):
-    alt = self.sun_pos_angles[0] - (0.5*speed_mult)
-    return alt
+    self.__altitude_angle -= (0.5*speed_mult)
 
   def decrement_sun_azi_angle(self,speed_mult):
-    azi = self.sun_pos_angles[1] - (0.5*speed_mult)
-    return azi
+    self.__azimuth_angle -= (0.5*speed_mult)
+    if self.__azimuth_angle < 0:
+      self.__azimuth_angle += 360
 
   def move_sun(self,min_max):
-    pass
     #takes list input from dict in form "key":["min alt","max alt","min azi","max azi"],
-    
+    mult = min_max[4]
+    #azi_diff = abs(min_max[3]-min_max[2])
 
+    if self.__altitude_angle >= min_max[1]:
+      self.zenith_flag = 1
+
+    if self.zenith_flag != 1:
+      if self.__altitude_angle >= min_max[0] and self.__altitude_angle <= min_max[1]:
+        self.increment_sun_alt_angle(mult)
+    elif self.zenith_flag == 1:
+      if self.__altitude_angle >= min_max[0] and self.__altitude_angle <= min_max[1]:
+        self.decrement_sun_alt_angle(mult)
+
+    if self.__azimuth_angle >= min_max[2] and self.__azimuth_angle < 360:
+        self.increment_sun_azi_angle(mult)
+    elif self.__azimuth_angle >= 0 and self.__azimuth_angle < min_max[3]:
+        self.increment_sun_azi_angle(mult)
+
+    self.set_sun_direction()
