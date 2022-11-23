@@ -90,7 +90,6 @@ class SolarTrackerArray:
     sx = self.radius*cos(self.convert_degs_to_rads(self.__altitude_angle))
     sy = self.radius*sin(self.convert_degs_to_rads(self.__altitude_angle))
     sz = sx/(tan(self.convert_degs_to_rads((2*pi)-self.__azimuth_angle)))
-
     self.sun_coords = [sx,sy,sz]
 
   def calc_angles_from_sunpoints(self):

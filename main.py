@@ -11,14 +11,14 @@ import time
 def run_routine():
   #start
   #init instances of tracker and diodes and clock
-  start = time.clock()
+  routine_start = time.clock()
   n_sensor = Photodiode("N")
   s_sensor = Photodiode("S")
   e_sensor = Photodiode("E")
   w_sensor = Photodiode("W")
 
   array1 = SolarTrackerArray(1,30,300)
-
+  
   wind_input_speed = 0
   wind_safe = False
   daytime = False
@@ -39,13 +39,19 @@ def run_routine():
 
       while daytime == True:
         state_tracker = 0
+        end = time.clock()
         #check all 4 diodes and compare them
         e1 = e_sensor.check_diode_output_strength()
         w1 = w_sensor.check_diode_output_strength()
         s1 = s_sensor.check_diode_output_strength()
         n1 = n_sensor.check_diode_output_strength()
 
-        if e1 > w1:
+        if end-routine_start >= 600:
+          daytime = False
+          wind_safe = False
+          running_init = False
+
+        elif e1 > w1:
           #turn anticlockwise
           array1.move_azimuth_motor(-1)
           #moved
@@ -65,6 +71,8 @@ def run_routine():
         else:
           daytime = False
           wind_safe = False
+
+        time.sleep(180)
       
       state_tracker = 2
     
@@ -72,8 +80,8 @@ def run_routine():
     array1.safety_state()
 
 
-
 def main():
+  #t0 = time.clock()
   run_routine()
 
 if __name__ == "__main__":

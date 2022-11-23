@@ -17,19 +17,20 @@
 #horizon is 10000m away
 #############################
 
+from math import cos,sin,tan,pi
+
 class Sun:
   solar_constant = 1380 #Watts/m^2
   avg_horizon_dist = 10000 #metres
 
   ##this doesnt work
   speed_const = 0.15 #degs/min
-  neg_speed_const = -0.15
 
   def __init__(self,starting_azimuth:float, starting_altitude:float):
-    self.__sun_altitude_angle = starting_altitude
-    self.__sun_azimuth_angle = starting_azimuth
-    self.sun_pos = []
-    self.centre_check = False
+    self.__altitude_angle = starting_altitude
+    self.__azimuth_angle = starting_azimuth
+    self.sun_pos_angles = []
+    self.sun_coords = []
 
     self.weather_effect = 1.0
     self.output_radiation_power = float
@@ -40,18 +41,21 @@ class Sun:
 
   def update_sun_pos(self): ###this doesnt work
     #per minute
-    self.__sun_azimuth_angle += self.speed_const
-    
-    if self.__sun_azimuth_angle >= 359:
-      self.__sun_azimuth_angle = 0
-      self.centre_check = True
-      
-    if self.centre_check == True:
-      self.__sun_altitude_angle += self.neg_speed_const
-    else:
-      self.__sun_altitude_angle += self.speed_const
+    sx = self.radius*cos(self.convert_degs_to_rads(self.__altitude_angle))
+    sy = self.radius*sin(self.convert_degs_to_rads(self.__altitude_angle))
+    sz = sx/(tan(self.convert_degs_to_rads((2*pi)-self.__azimuth_angle)))
+    self.sun_coords = [sx,sy,sz]
 
-    self.sun_pos = [self.__sun_altitude_angle,self.__sun_azimuth_angle]
+  def set_sun_direction(self):
+    self.sun_pos_angles = [self.__altitude_angle, self.__azimuth_angle]
 
   def get_sun_pos(self):
     return self.sun_pos
+
+  def convert_degs_to_rads(self,in_degrees):
+    radians = in_degrees*(pi/180)
+    return radians
+
+  def convert_rads_to_degs(self,in_rads):
+    degrees = in_rads/(pi/180)
+    return degrees
