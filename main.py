@@ -62,9 +62,7 @@ def run_routine(chosen_month):
         s1 = s_sensor.check_diode_output_strength()
         n1 = n_sensor.check_diode_output_strength()
 
-        #print("## Azimuth Motor Angle: " + str(array1.sun_direction[1]) + "## Altitude Motor Angle: "+ str(array1.sun_direction[0]) + "## Current State: "+str(state_tracker) +"##")
-
-        print(array1.sun_direction)
+        print("## Azimuth Motor Angle: " + str(array1.sun_direction[1]) + "## Altitude Motor Angle: "+ str(array1.sun_direction[0]) + "## Currsnt State: " + str(state_tracker) +"##")
         
         if end-routine_start >= 60: #600 actually, shortened for demo #resets system
           daytime = False
@@ -74,40 +72,48 @@ def run_routine(chosen_month):
         elif array1.sun_direction[0] < the_sun.sun_pos_angles[0]:
           #tilt up
           array1.move_altitude_motor(1)
+          array1.set_sun_direction()
 
         elif array1.sun_direction[0] > the_sun.sun_pos_angles[0]:
           #tilt down
           array1.move_altitude_motor(-1)
-        
+          array1.set_sun_direction()
         #issues
 
         elif 270 < array1.sun_direction[1] < 360 and 270 < the_sun.sun_pos_angles[1] < 360:
           if array1.sun_direction[1] < the_sun.sun_pos_angles[1]:
           #turn clockwise in quadrant
             array1.increment_array_azi_angle()
+            array1.set_sun_direction()
 
           elif array1.sun_direction[1] > the_sun.sun_pos_angles[1]:
             array1.decrement_array_azi_angle()
+            array1.set_sun_direction()
             #turn antclockwise in quadrant
 
         elif 0 < array1.sun_direction[1] < 90 and 0 < the_sun.sun_pos_angles[1] < 90:
           if array1.sun_direction[1] < the_sun.sun_pos_angles[1]:
           #turn clockwise in quadrant
             array1.increment_array_azi_angle()
+            array1.set_sun_direction()
 
           elif array1.sun_direction[1] > the_sun.sun_pos_angles[1]:
             array1.decrement_array_azi_angle()
+            array1.set_sun_direction()
             #turn antclockwise in quadrant
 
         elif 270 < array1.sun_direction[1] < 360 and 0 < the_sun.sun_pos_angles< 90:
           array1.increment_array_azi_angle()
+          array1.set_sun_direction()
           #move forward across axis
         
         elif 0 < array1.sun_direction[1] < 90 and 270 < the_sun.sun_pos_angles< 360:
           array1.decrement_array_azi_angle()
+          array1.set_sun_direction()
           #move back across axis
 
         else:
+          array1.set_sun_direction()
           daytime = False
           wind_safe = False
 
